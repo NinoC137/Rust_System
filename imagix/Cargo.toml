@@ -1,0 +1,16 @@
+[package]
+name = "imagix"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "imagix"
+path = "src/imagix/mod.rs"
+
+[[bin]]
+name = "imagecli"
+path = "src/imagecli.rs"
+
+[dependencies]
+image = "0.23.12"
+structopt = "0.3.20"
