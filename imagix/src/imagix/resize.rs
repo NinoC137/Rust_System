@@ -4,6 +4,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 use std::time::{Duration, Instant};
 use image::ImageFormat;
+
 use super::error::ImagixError;
 
 struct Elapsed(Duration);
@@ -23,6 +24,23 @@ pub enum SizeOption {
 pub enum Mode {
     Single,
     All,
+}
+
+pub fn process_resize_request(
+    size: SizeOption,
+    mode: Mode,
+    src_folder: &mut PathBuf,
+) -> Result<(), ImagixError> {
+    let size = match size {
+        SizeOption::Small => 200,
+        SizeOption::Medium => 400,
+        SizeOption::Large => 800,
+    };
+    let _ = match mode {
+        Mode::All => resize_all(size, src_folder)?,
+        Mode::Single => resize_single(size, src_folder)?,
+    };
+    Ok(())
 }
 
 impl fmt::Display for Elapsed {
@@ -127,4 +145,22 @@ Result<(), ImagixError> {
         desc_folder
     );
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_single_image_resize() {
+        let mut path = PathBuf::from(
+            "/Users/nino/CLionProjects/Rust_System/imagix/image1.jpg");
+        let des_path = PathBuf::from(
+            "/Users/nino/CLionProjects/Rust_System/imagix/tmp/image1.png");
+
+        match process_resize_request(SizeOption::Small, Mode::Single, &mut path) {
+            Ok(_) => println!("Success."),
+            Err(e) => println!("Failed. {}", e),
+        }
+        assert_eq!(true, des_path.exists());
+    }
 }
